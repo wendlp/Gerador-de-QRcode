@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  // base './' usa caminhos relativos e resolve o erro 404 no GitHub Pages definitivamente
-  base: './',
+  // Nome exato com o 'c' minúsculo conforme a URL do seu GitHub Pages
+  base: '/Gerador-de-QRcode/',
   plugins: [
     react(),
     tailwindcss(),
