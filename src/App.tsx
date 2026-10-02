@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useRef, useState, useMemo } from "react";
 import { toJpeg, toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { QRCodeSVG } from "qrcode.react";
@@ -20,7 +20,7 @@ import {
   UserRound,
   Github,
   Linkedin,
-  Instagram,
+  Share2,
   AlertCircle
 } from "lucide-react";
 
@@ -130,7 +130,6 @@ export default function App() {
   const hasName = profile.name.trim().length > 0;
   const isProfileEmpty = Object.values(profile).every((val) => val.trim() === "") && !avatar;
 
-  // CORREÇÃO: Formatação robusta do vCard (padrão \r\n)
   const qrValue = useMemo(() => {
     if (!hasName) return "";
     const lines = [
@@ -147,14 +146,12 @@ export default function App() {
     return lines.join("\r\n");
   }, [profile, hasName]);
 
-  // CORREÇÃO: Timer de notificação sem encavalamento
   const showNotice = (message: string) => {
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     setNotice(message);
     timeoutRef.current = window.setTimeout(() => setNotice(""), 3000);
   };
 
-  // CORREÇÃO: Limite de 5MB na imagem
   const handleAvatar = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -200,7 +197,6 @@ export default function App() {
     link.click();
   };
 
-  // CORREÇÃO: Download com try/catch e encode moderno
   const downloadQr = () => {
     if (!hasName || !qrRef.current) return;
     try {
@@ -221,9 +217,8 @@ export default function App() {
         triggerDownload(canvas.toDataURL("image/png"), `${profile.name || "qrcode"}-qrcode.png`);
         showNotice("QR Code baixado com sucesso");
       };
-      // Usando decodeURIComponent moderno ao invés do obsoleto unescape
       image.src = `data:image/svg+xml;base64,${window.btoa(decodeURIComponent(encodeURIComponent(svgData)))}`;
-    } catch (error) {
+    } catch {
       showNotice("Erro ao gerar QR Code");
     }
   };
@@ -234,7 +229,7 @@ export default function App() {
       const dataUrl = await toJpeg(cardRef.current, { quality: 0.98, cacheBust: true, pixelRatio: 2 });
       triggerDownload(dataUrl, `${profile.name || "cartao"}.jpg`);
       showNotice("Cartão JPG baixado com sucesso");
-    } catch (err) {
+    } catch {
       showNotice("Erro ao exportar JPG. Tente imagens menores.");
     }
   };
@@ -248,20 +243,19 @@ export default function App() {
       pdf.addImage(dataUrl, "PNG", 0, 0, node.offsetWidth, node.offsetHeight);
       pdf.save(`${profile.name || "cartao"}.pdf`);
       showNotice("Cartão PDF baixado com sucesso");
-    } catch (err) {
+    } catch {
       showNotice("Erro ao exportar PDF.");
     }
   };
 
   const buttonBackground = gradientButtons ? `linear-gradient(135deg, ${colors.primary}, ${colors.primary}cc)` : colors.primary;
 
-  // CORREÇÃO: Redes sociais incluídas no mapeamento
   const contactLinks = [
     { icon: <Phone />, label: "WhatsApp", value: profile.whatsapp },
     { icon: <Mail />, label: "E-mail", value: profile.email },
     { icon: <Linkedin />, label: "LinkedIn", value: profile.linkedin },
     { icon: <Github />, label: "GitHub", value: profile.github },
-    { icon: <Instagram />, label: "Instagram", value: profile.instagram },
+    { icon: <Share2 />, label: "Instagram", value: profile.instagram },
     { icon: <Globe />, label: "Website", value: profile.website },
   ].filter((item) => item.value.trim() !== "");
 
@@ -288,7 +282,6 @@ export default function App() {
       <div className="mx-auto max-w-[1440px] px-5 pt-8 sm:px-8 lg:px-14">
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(400px,0.9fr)] xl:gap-14">
           
-          {/* LADO ESQUERDO: FORMULÁRIO */}
           <div className="space-y-4">
             <Section icon={<UserRound className="size-5" />} title="Informações pessoais" subtitle="Conte um pouco sobre você">
               <div className="mb-5 flex items-center gap-4 rounded-2xl bg-slate-50 p-4 border border-slate-100">
@@ -355,7 +348,6 @@ export default function App() {
             </Section>
           </div>
 
-          {/* LADO DIREITO: PREVIEW E CONTROLES */}
           <aside className="lg:sticky lg:top-24 space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <ActionButton onClick={handleBack} disabled={previous === null}>
@@ -378,7 +370,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* ABA CARTÃO */}
               <div className="grid min-h-[680px] place-items-center bg-[#e8e8e2] p-4 sm:p-8">
                 <div className={activeTab === "card" ? "block" : "hidden"}>
                   <div ref={cardRef} className="relative w-[375px] max-w-full overflow-hidden rounded-[34px] shadow-2xl" style={{ backgroundColor: colors.background, color: colors.text }}>
@@ -401,7 +392,6 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* CORREÇÃO: Classe "false" corrigida */}
                       <h2 className={`mt-5 font-display text-3xl font-extrabold tracking-tight ${!profile.name ? "opacity-40" : ""}`}>
                         {profile.name || "Seu nome"}
                       </h2>
@@ -423,7 +413,6 @@ export default function App() {
                       <div className="mt-auto flex items-end justify-center pt-8">
                         {hasName && (
                           <div className="rounded-2xl border p-2 shadow-sm bg-white" style={{ borderColor: `${colors.primary}30` }}>
-                            {/* CORREÇÃO: includeMargin removido (obsoleto no qrcode.react) */}
                             <QRCodeSVG value={qrValue} size={64} fgColor={colors.qrForeground} bgColor="transparent" level="M" />
                           </div>
                         )}
@@ -432,7 +421,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* ABA QR CODE ISOLADO */}
                 <div className={`flex flex-col items-center text-center ${activeTab === "qr" ? "flex" : "hidden"}`}>
                   {hasName ? (
                     <>
