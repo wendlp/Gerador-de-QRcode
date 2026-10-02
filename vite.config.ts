@@ -5,8 +5,8 @@ import path from 'node:path'
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig({
-  // Usar caminhos relativos resolve os erros 404 da pasta assets no GitHub Pages
-  base: './',
+  // Nome exato do repositório para o GitHub Pages (respeitando maiúsculas e minúsculas)
+  base: '/Gerador-de-QRCode/',
   plugins: [
     react(),
     tailwindcss(),
