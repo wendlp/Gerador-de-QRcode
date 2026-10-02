@@ -1,21 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'node:path'
 
-// Vite config — https://vitejs.dev/config/
 export default defineConfig({
-  // Nome exato do repositório para o GitHub Pages (respeitando maiúsculas e minúsculas)
-  base: '/Gerador-de-QRCode/',
+  // base './' usa caminhos relativos e resolve o erro 404 no GitHub Pages definitivamente
+  base: './',
   plugins: [
     react(),
     tailwindcss(),
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
   build: {
     sourcemap: false,
     minify: true,
