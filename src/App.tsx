@@ -18,9 +18,7 @@ import {
   Undo2,
   Upload,
   UserRound,
-  Github,
-  Linkedin,
-  Share2,
+  ExternalLink,
   AlertCircle
 } from "lucide-react";
 
@@ -253,9 +251,9 @@ export default function App() {
   const contactLinks = [
     { icon: <Phone />, label: "WhatsApp", value: profile.whatsapp },
     { icon: <Mail />, label: "E-mail", value: profile.email },
-    { icon: <Linkedin />, label: "LinkedIn", value: profile.linkedin },
-    { icon: <Github />, label: "GitHub", value: profile.github },
-    { icon: <Share2 />, label: "Instagram", value: profile.instagram },
+    { icon: <ExternalLink />, label: "LinkedIn", value: profile.linkedin },
+    { icon: <ExternalLink />, label: "GitHub", value: profile.github },
+    { icon: <ExternalLink />, label: "Instagram", value: profile.instagram },
     { icon: <Globe />, label: "Website", value: profile.website },
   ].filter((item) => item.value.trim() !== "");
 
